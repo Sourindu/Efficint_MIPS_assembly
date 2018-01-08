@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<body>
+
+<div class="reverse">
+<h1>Computer Architecture</h1>
+<h2>Project 1: Pipeline Hazards</h2>
+</div>
+
+<dl>
+
+<dt>Purpose</dt>
+
+<dd>Learn to avoid branch and data hazards by reordering instructions
+in a program.  Learn to reduce branch hazards in a pipelined
+datapath. </dd>
+
+<dt>Method</dt>
+<dd>Modify programs to avoid branch and data hazards.  Modify the
+datapath to reduce branch hazards.</dd>
+
+<dt>Preparation</dt>
+<dd>Read the related sections in the textbook.</dd>
+
+<dt>Tools</dt>
+<dd>Download and install SPIM and Logisim from the Internet.</dd>
+
+<dt>Files to Use</dt>
+<dd>
+<a href="pipeline.circ"><code>pipeline.circ</code></a>,
+<a href="../control32/solution/control.circ"><code>control.circ</code></a>,
+<a href="../datapath32/cpu32.circ"><code>cpu32.circ</code></a>,
+<a href="../datapath32/misc32.circ"><code>misc32.circ</code></a>,
+<a href="loop1.s"><code>loop1.s</code></a>,
+<a href="loop2.s"><code>loop2.s</code></a>, and
+<a href="data.mem"><code>data.mem</code></a>.
+</dd>
+
+<dt>What to Hand In</dt>
+<dd>Completed <code>pipeline.circ</code>,
+<code>loop1.s</code>, <code>loop1.mem</code>, <!-- 3 branch delay slots -->
+<code>loop2.s</code>, <code>loop2.mem</code>, <!-- 3 branch delay slots, unrolled -->
+<code>loop3.s</code>, <code>loop3.mem</code>, <!-- 1 branch delay slot -->
+<code>loop4.s</code>, <code>loop4.mem</code>. <!-- 1 branch delay slot, unrolled -->
+</dd>
+
+</dl>
+
+<hr />
+
+<p> The file <a href="pipeline.circ"><code>pipeline.circ</code></a>
+contains a pipelined implementation of a subset of the MIPS
+instruction set architecture.  No provisions have been made to reduce
+branch and data hazards.</p>
+
+
+<h2>Avoiding branch and data hazards in software</h2>
+<ol>
+
+<li>Modify the program in <a href="loop1.s"><code>loop1.s</code></a> by
+inserting <code>nop</code> instructions and re-ordering instructions
+to avoid branch and data hazards.  Restrict your selection of
+instructions to those supported directly by the hardware.  Try to use
+as few <code>nop</code> instructions as possible in order to minimize
+execution time.
+
+(You should be able to eliminate all but 2 of the <code>nop</code>
+instructions from the body of the loop.)
+
+<!--
+(You may be able to eliminate additional <code>nop</code> instructions
+if you are willing to re-order the instructions in such a way that the
+program no longer operates correctly in the absence of data hazards.)
+-->
+
+</li>
+
+<li>Translate the assembly language program in <code>loop1.s</code>
+into machine language (in hexadecimal) and save the result in
+a file named <code>loop1.mem</code>.
+
+(The <code>nop</code> instruction should be encoded as all zeros, an
+R-type instruction with register <code>$zero</code> as its destination.
+You may want to use the SPIM
+simulator to assist you with the translation task, but be careful.  The branch
+offsets in SPIM are incorrect.  They are relative to the address of the
+branch instruction instead of the address of the instruction following
+the branch.) </li>
+
+<li>Load <a href="data.mem"><code>data.mem</code></a> into the data
+memory.  Load your file <code>loop1.mem</code> into the program
+memory, and verify the correct operation of your program.  The number
+44 (0x2C hexadecimal) should be stored in memory location 0 if your
+program is correct.</li>
+
+<li>The program in <a href="loop2.s"><code>loop2.s</code></a> performs
+the same function as the program in <code>loop1.s</code>, but the body
+of the loop has been unrolled 4 times.  Modify the program in
+<code>loop2.s</code> by inserting <code>nop</code> instructions and
+re-ordering instructions to avoid branch and data hazards. Try to use
+as few <code>nop</code> instructions as possible in order to minimize
+execution time.
+
+(Addition is both commutative and associative, giving you quite a bit
+of flexibility in ordering the instructions.  Remember that you have
+many registers available to you.  You should be able to eliminate all
+of the <code>nop</code> instructions from the body of the loop using no
+more than 2 additional registers.) </li>
+
+<li>Translate the assembly language program in <code>loop2.s</code>
+into machine language (in hexadecimal) and save the result in
+a file named <code>loop2.mem</code>.</li>
+
+<li>Load <a href="data.mem"><code>data.mem</code></a> into the data
+memory.  Load your file <code>loop2.mem</code> into the program
+memory, and verify the correct operation of your program.</li>
+
+</ol>
+
+
+<h2>Reducing branch hazards in hardware</h2>
+
+<ol>
+
+<li>Modify the pipelined datapath to reduce the branch hazards.
+<ol>
+<li>Add the <code>Equality</code> subcircuit to the ID stage of the
+pipeline.</li>
+<li>Move the components that control branching from the EX and MEM
+stages of the pipeline to the ID stage of the pipeline.</li>
+<li>Remove any un-needed wires and pipeline registers.  You do not
+need to adjust the bit-widths of the splitters and control registers,
+and you do not need to connect unused splitter outputs, but you should
+not leave any splitter inputs disconnected.</li>
+</ol>
+</li>
+
+<li>If necessary, modify your program in <code>loop1.s</code> so that
+it will operate correctly with the reduced branch delay.  Try to
+minimize the number of <code>nop</code> instructions.  Save the
+modified program in a file named <code>loop3.s</code>.
+
+(You should be able to eliminate all of the <code>nop</code> instructions
+from the body of the loop.)
+
+<!--
+(You may be able to eliminate additional <code>nop</code> instructions if you
+are willing to re-order the instructions in such a way that the
+program no longer operates correctly in the absence of data hazards.)
+-->
+
+</li>
+
+<li>If necessary, modify your program in <code>loop2.s</code> so that
+it will operate correctly with the reduced branch delay.  Try to
+minimize the execution time of the program.  Save the modified program
+in a file named <code>loop4.s</code>.
+
+(You should be able to eliminate all of the <code>nop</code> instructions
+from the body of the loop using no more than 4 additional registers.)
+
+</li>
+
+<li>Translate your assembly language programs in <code>loop3.s</code>
+and <code>loop4.s</code> into machine language, saving the results in
+files named <code>loop3.mem</code> and <code>loop4.mem</code>.</li>
+
+<li>Load <a href="data.mem"><code>data.mem</code></a>
+into the data memory.  Load your files <code>loop3.mem</code> and
+<code>loop4.mem</code> into the program memory to verify the correct
+operation of your programs.</li>
+
+</ol>
+
+</body>
+
+</html>
+
+<!-- $Id: index.html,v 1.2 2006/05/25 14:02:07 parks Exp $ -->
